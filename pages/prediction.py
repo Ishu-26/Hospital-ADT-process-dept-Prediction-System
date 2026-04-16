@@ -3,10 +3,12 @@ from ML_part import *
 
 st.title("🧠 Prediction Panel")
 
+
 df_raw = generate_hospital_data()
 df, df_ml = preprocess_data(df_raw)
 model, cols, _, _ = train_model(df_ml)
 
+#inputs
 priority = st.selectbox("Priority", [1,2,3])
 queue = st.slider("Queue", 1, 50, 10)
 beds = st.slider("Beds", 0, 5, 2)
@@ -24,6 +26,61 @@ patient = {
     f"dept_{dept}": 1
 }
 
-if st.button("Predict"):
+#explanation function
+def explain_prediction(patient):
+    reasons = []
+
+    if patient['queue_length'] > 20:
+        reasons.append("High queue length is increasing delay")
+
+    if patient['bed_availability'] <= 1:
+        reasons.append("Low bed availability is causing waiting")
+
+    if patient['shift_encoded'] == 3:
+        reasons.append("Night shift has lower staff availability")
+
+    if patient['priority_level'] == 1:
+        reasons.append("Low priority patients are processed slower")
+
+    return reasons
+
+if st.button("🚀 Predict"):
+
     pred, _ = predict_patient(patient, model, cols)
-    st.metric("Delay", f"{pred:.2f} mins")
+
+    # MAIN OUTPUT
+    st.metric("⏱️ Predicted Delay", f"{pred:.2f} mins")
+
+#risk level:
+    if pred > 80:
+        risk = "HIGH"
+        emoji = "🔴"
+    elif pred > 60:
+        risk = "MEDIUM"
+        emoji = "🟡"
+    else:
+        risk = "LOW"
+        emoji = "🟢"
+
+    st.metric("🚦 Risk Level", f"{emoji} {risk}")
+
+  
+    st.subheader("🔍 Why this delay?")
+
+    reasons = explain_prediction(patient)
+
+    if reasons:
+        for r in reasons:
+            st.write(f"• {r}")
+    else:
+        st.write("System operating under normal conditions")
+
+#suggested action
+    st.subheader("🛠️ Suggested Action")
+
+    if pred > 80:
+        st.error("🚨 Critical: Add staff or reduce queue immediately")
+    elif pred > 60:
+        st.warning("⚠️ Monitor queue and bed allocation")
+    else:
+        st.success("✅ System is under control")
