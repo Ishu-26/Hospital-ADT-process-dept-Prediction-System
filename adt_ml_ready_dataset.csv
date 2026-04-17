@@ -1,4 +1,4 @@
-case_id,activity,department,priority_level,shift_time,queue_length,bed_availability,start_time,end_time,process_debt_mins,previous_activity
+case_id,Activity,department,priority_level,shift_time,queue_length,bed_availability,start_time,end_time,process_debt_mins,previous_activity
 P-0001,Registration,Front Desk,2,Evening,11,-1,2026-03-27 05:00:00,2026-03-27 06:14:00,74,Start
 P-0001,Triage,ER,2,Evening,11,5,2026-03-27 06:20:00,2026-03-27 07:25:00,65,Registration
 P-0001,Doctor Consult,OPD,2,Morning,7,-1,2026-03-27 07:42:00,2026-03-27 08:34:00,52,Triage

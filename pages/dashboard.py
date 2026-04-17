@@ -1,6 +1,5 @@
 import streamlit as st
 from ML_part import *
-from app import build_model, load_data
 
 st.title("📊 Dashboard")
 
@@ -16,9 +15,7 @@ if "df" not in st.session_state:
 
 
 
-# ================================
-# KPI METRICS
-# ================================
+# KPI metrices
 c1, c2, c3, c4 = st.columns(4)
 
 c1.metric("R²", f"{r2:.2f}")
@@ -26,9 +23,7 @@ c2.metric("MAE", f"{mae:.2f}")
 c3.metric("Avg Delay", f"{df['process_debt_mins'].mean():.1f}")
 c4.metric("Variance", f"{df['process_debt_mins'].std():.1f}")
 
-# ================================
-# SYSTEM HEALTH SUMMARY (NEW)
-# ================================
+# system health summary
 st.subheader("🧾 System Health Summary")
 
 def interpret_system(r2, mae, df):
@@ -70,18 +65,14 @@ for s in summary:
 
 st.divider()
 
-# ================================
-# DEPARTMENT ANALYSIS
-# ================================
+# department analysis
 st.subheader("🏥 Department-wise Delay Analysis")
 
 dept_avg = df.groupby("department")["process_debt_mins"].mean()
 
 st.bar_chart(dept_avg)
 
-# ================================
-# GRAPH EXPLANATION (NEW)
-# ================================
+# graph explanation
 worst_dept = dept_avg.idxmax()
 best_dept = dept_avg.idxmin()
 
@@ -93,9 +84,7 @@ st.info(f"""
 - This helps identify where hospital resources are under pressure  
 """)
 
-# ================================
-# QUICK RECOMMENDATION (NEW)
-# ================================
+# quick recommandation
 st.subheader("🛠️ Quick Recommendation")
 
 if worst_dept == "ER":

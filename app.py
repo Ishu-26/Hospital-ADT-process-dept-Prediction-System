@@ -8,16 +8,12 @@ st.set_page_config(page_title="NEURO-FLOW OS")
 
 init_db()
 
-# ================================
-# SESSION STATE
-# ================================
+# session state
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
 
-# ================================
-# FUNCTIONS (KEEP OUTSIDE)
-# ================================
+# functions
 def load_data():
     uploaded_file = st.file_uploader(
         "📂 Upload Hospital Dataset to predict system process dept",
@@ -65,9 +61,7 @@ def build_model(df_raw):
     return df, model, cols, mae, r2
 
 
-# ================================
-# LOGIN / SIGNUP
-# ================================
+# login/signup
 if not st.session_state.logged_in:
 
     st.title("🔐 NEURO-FLOW Authentication")
@@ -101,10 +95,7 @@ if not st.session_state.logged_in:
                 else:
                     st.error("Username already exists")
 
-
-# ================================
-# MAIN APP
-# ================================
+# main app
 else:
     st.sidebar.title("🏥 NEURO-FLOW")
     st.sidebar.success("Logged in")
@@ -114,9 +105,7 @@ else:
         st.rerun()
 
     st.title("Welcome to NEURO-FLOW OS 🚀")
-# ================================
-# INFO CARDS (SYSTEM OVERVIEW)
-# ================================
+
 
     st.markdown("""
     <style>
@@ -188,13 +177,10 @@ else:
 
     st.divider()
 
-    # ✅ LOAD DATA ONCE
+   
     df_raw = load_data()
-
-    # ✅ BUILD MODEL
     df, model, cols, mae, r2 = build_model(df_raw)
 
-    # ✅ STORE FOR OTHER PAGES
     st.session_state.df = df
     st.session_state.model = model
     st.session_state.cols = cols

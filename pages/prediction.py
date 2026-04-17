@@ -1,10 +1,7 @@
 import streamlit as st
 from ML_part import *
-from app import build_model, load_data
 
 st.title("🧠 Prediction Panel")
-
-
 
 df = st.session_state.df
 model = st.session_state.model
