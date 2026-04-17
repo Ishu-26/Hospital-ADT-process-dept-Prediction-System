@@ -1,14 +1,20 @@
 import streamlit as st
 from ML_part import *
+from app import build_model, load_data
 
 st.title("📊 Dashboard")
 
-# ================================
-# LOAD DATA
-# ================================
-df_raw = generate_hospital_data()
-df, df_ml = preprocess_data(df_raw)
-model, cols, mae, r2 = train_model(df_ml)
+df = st.session_state.df
+model = st.session_state.model
+cols = st.session_state.cols
+mae = st.session_state.mae
+r2 = st.session_state.r2
+
+if "df" not in st.session_state:
+    st.warning("⚠️ Please upload dataset from Home page first")
+    st.stop()
+
+
 
 # ================================
 # KPI METRICS

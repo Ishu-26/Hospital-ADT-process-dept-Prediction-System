@@ -4,15 +4,24 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from ML_part import *
+from app import build_model, load_data
 
 st.title("🤖 AI Readiness Audit System")
 
 # ================================
 # LOAD DATA
 # ================================
-df_raw = generate_hospital_data()
-df, df_ml = preprocess_data(df_raw)
-model, cols, mae, r2 = train_model(df_ml)
+
+df = st.session_state.df
+model = st.session_state.model
+cols = st.session_state.cols
+mae = st.session_state.mae
+r2 = st.session_state.r2
+
+if "df" not in st.session_state:
+    st.warning("⚠️ Please upload dataset from Home page first")
+    st.stop()
+
 
 # ================================
 # AI READINESS CHECK
@@ -60,10 +69,11 @@ st.metric("System Status", f"{emoji} {status}")
 # ================================
 # REASONS (DETAILED)
 # ================================
-st.subheader("❗ Why System is NOT AI Ready?")
+if status == "NOT READY":
+    st.subheader("❗ Why System is NOT AI Ready?")
 
-for r in reasons:
-    st.error(r)
+    for r in reasons:
+        st.error(r)
 
 # ================================
 # SHAP ANALYSIS
@@ -72,7 +82,7 @@ st.subheader("🧬 Explainable AI Insights")
 
 sample = df.sample(100)
 
-X = pd.get_dummies(sample, columns=['department', 'activity'])
+X = pd.get_dummies(sample, columns=['department', 'Activity'])
 
 # Align columns
 for col in cols:
@@ -92,14 +102,16 @@ st.pyplot(fig)
 # ================================
 # SHAP INTERPRETATION
 # ================================
-st.subheader("🔍 Key Drivers of Delay")
+
+st.subheader("🧠 AI Decision Explanation (SHAP Analysis)")
+st.caption("These factors influence predictions, even in AI-ready systems.")
 
 # Get top features
 importance = np.abs(shap_values.values).mean(axis=0)
 top_idx = np.argsort(importance)[::-1][:5]
 top_features = [cols[i] for i in top_idx]
 
-st.write("Top factors affecting delay:")
+st.write("Top factors affecting prediction:")
 for f in top_features:
     st.write(f"• {f}")
 
@@ -107,6 +119,8 @@ for f in top_features:
 # ACTIONABLE RECOMMENDATIONS
 # ================================
 st.subheader("🛠️ How to Make System AI Ready?")
+
+
 
 actions = []
 
@@ -129,9 +143,13 @@ if any("bed_availability" in f for f in top_features):
 if any("shift_encoded" in f for f in top_features):
     actions.append("Balance staffing across shifts (especially Night shift)")
 
-# Show actions
-for a in actions:
-    st.info(f"➡️ {a}")
+
+if status == "NOT READY":
+    for a in actions:
+        st.info(f"➡️ {a}")
+else:
+    st.success("No improvements needed — system is already optimized 🚀")
+
 
 # ================================
 # FINAL SUMMARY
@@ -141,6 +159,6 @@ st.divider()
 st.subheader("📌 Final AI Audit Conclusion")
 
 if status == "READY":
-    st.success("System is AI Ready. Model is reliable and stable for deployment.")
+    st.success("System is AI Ready. Syetem is reliable and stable for adopting AI.")
 else:
     st.error("System is NOT AI Ready. Requires process stabilization and model improvement.")
