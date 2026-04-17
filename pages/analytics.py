@@ -2,6 +2,7 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 from ML_part import *
+import math
 from app import build_model, load_data
 
 st.title("📈 Hospital Analytics")
@@ -179,7 +180,7 @@ st.subheader("📌 Summary for Admin")
 
 st.write(f"""
 - Highest delay department: **{worst_dept}**
-- Avg delay: **{filtered_df['process_debt_mins'].mean():.1f} mins**
-- Queue pressure: **{filtered_df['queue_length'].mean():.1f}**
-- Bed availability: **{filtered_df['bed_availability'].mean():.1f}**
+- Average processing delay: **{filtered_df['process_debt_mins'].mean():.1f} mins**
+- Average queue load: **around {math.ceil(filtered_df['queue_length'].mean()):.1f} patients in waiting**
+- Average resource availability: **around {math.ceil(filtered_df['bed_availability'].mean()):.1f} beds free**
 """)
