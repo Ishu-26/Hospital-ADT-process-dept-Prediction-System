@@ -4,14 +4,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from ML_part import *
-from app import build_model, load_data
 
 st.title("🤖 AI Readiness Audit System")
 
-# ================================
-# LOAD DATA
-# ================================
-
+# load data
 df = st.session_state.df
 model = st.session_state.model
 cols = st.session_state.cols
@@ -23,9 +19,7 @@ if "df" not in st.session_state:
     st.stop()
 
 
-# ================================
-# AI READINESS CHECK
-# ================================
+# AI rediness check
 def check_ai_readiness(r2, mae, df):
     variance = df['process_debt_mins'].std()
 
@@ -48,9 +42,7 @@ def check_ai_readiness(r2, mae, df):
 
 status, emoji, reasons = check_ai_readiness(r2, mae, df)
 
-# ================================
-# KPI PANEL
-# ================================
+# KPI panel
 st.subheader("📊 Key Metrics")
 
 c1, c2, c3 = st.columns(3)
@@ -60,31 +52,24 @@ c3.metric("Variance", f"{df['process_debt_mins'].std():.2f}")
 
 st.divider()
 
-# ================================
-# STATUS
-# ================================
+# status
 st.subheader("🚦 AI Readiness Status")
 st.metric("System Status", f"{emoji} {status}")
 
-# ================================
-# REASONS (DETAILED)
-# ================================
+# reason
 if status == "NOT READY":
     st.subheader("❗ Why System is NOT AI Ready?")
 
     for r in reasons:
         st.error(r)
 
-# ================================
-# SHAP ANALYSIS
-# ================================
+# SHAP analysis
 st.subheader("🧬 Explainable AI Insights")
 
 sample = df.sample(100)
 
 X = pd.get_dummies(sample, columns=['department', 'Activity'])
 
-# Align columns
 for col in cols:
     if col not in X.columns:
         X[col] = 0
@@ -99,14 +84,12 @@ fig, ax = plt.subplots()
 shap.summary_plot(shap_values, X, show=False)
 st.pyplot(fig)
 
-# ================================
-# SHAP INTERPRETATION
-# ================================
+# SHAP Interpretation
 
 st.subheader("🧠 AI Decision Explanation (SHAP Analysis)")
 st.caption("These factors influence predictions, even in AI-ready systems.")
 
-# Get top features
+
 importance = np.abs(shap_values.values).mean(axis=0)
 top_idx = np.argsort(importance)[::-1][:5]
 top_features = [cols[i] for i in top_idx]
@@ -115,9 +98,7 @@ st.write("Top factors affecting prediction:")
 for f in top_features:
     st.write(f"• {f}")
 
-# ================================
-# ACTIONABLE RECOMMENDATIONS
-# ================================
+# actionalable recommandations
 st.subheader("🛠️ How to Make System AI Ready?")
 
 
@@ -151,9 +132,7 @@ else:
     st.success("No improvements needed — system is already optimized 🚀")
 
 
-# ================================
-# FINAL SUMMARY
-# ================================
+# final summary
 st.divider()
 
 st.subheader("📌 Final AI Audit Conclusion")
